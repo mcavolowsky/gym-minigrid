@@ -16,7 +16,7 @@ class MultiStlEnv(MiniGridEnv):
         super().__init__(
             height=self.height,
             width=self.width,
-            max_steps=4*self.height*self.width,
+            max_steps=4*(self.height+self.width),
             # Set this to True for maximum speed
             see_through_walls=False,
             seed=None
@@ -90,6 +90,10 @@ class MultiStlEnv(MiniGridEnv):
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
                 reward = -1
                 print('lava!')
+            if False: # this is the "STL" implemetation
+                reward = min([(x_a-x_l)**2+(y_a-y_l)**2
+                              for (x_a, y_a) in self.path
+                              for (x_l,y_l) in self.lavas])**0.5
         else:
             reward = -0.01
 
@@ -105,7 +109,7 @@ class MultiStlEnv(MiniGridEnv):
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
         p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [9, 0, 0]       # "wall" (9 = lava, 2 = wall)
+        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
         a = [10, 0, 0]      # agent
         g = [8, 0, 0]       # goal
         f = [0, 0, 0]       # floor
@@ -114,15 +118,15 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,a,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
 
             [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
 
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
