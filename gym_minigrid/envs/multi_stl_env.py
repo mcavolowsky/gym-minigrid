@@ -115,7 +115,7 @@ class MultiStlEnv(MiniGridEnv):
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
         p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
+        w = [9, 0, 0]       # "wall" (9 = lava, 2 = wall)
         a = [10, 0, 0]      # agent
         g = [8, 0, 0]       # goal
         f = [0, 0, 0]       # floor
