@@ -31,6 +31,8 @@ class MultiStlEnv(MiniGridEnv):
         self.path = []
         self.lavas = []
 
+        self.stl = True
+
     def _gen_grid(self, width, height):
         assert width >= 5 and height >= 5
 
@@ -50,7 +52,8 @@ class MultiStlEnv(MiniGridEnv):
                 else:
                     self.put_obj(obj, i, j)
 
-                if type(obj) == Lava:
+                if type(obj) == Lava or \
+                    (type(obj) == Wall and obj.color == 'red'):
                     self.lavas.append((i,j))
 
         self.mission = (
@@ -91,17 +94,22 @@ class MultiStlEnv(MiniGridEnv):
 
         if done:
             if tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='goal']:
-                reward = self.goal_reward
-                print('goal!')
+                if self.stl:  # this is the "STL" implemetation
+                    reward = min([(x_a - x_l) ** 2 + (y_a - y_l) ** 2
+                                  for (x_a, y_a) in self.path
+                                  for (x_l, y_l) in self.lavas]) ** 0.5
+                else:
+                    reward = self.goal_reward
+                #print('goal!')
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
-                reward = self.failure_reward
-                print('lava!')
-            if False: # this is the "STL" implemetation
-                reward = min([(x_a-x_l)**2+(y_a-y_l)**2
-                              for (x_a, y_a) in self.path
-                              for (x_l,y_l) in self.lavas])**0.5
+                if self.stl:
+                    reward = 0
+                else:
+                    reward = self.failure_reward
+                #print('lava!')
+
         else:
-            reward = self.step_penalty
+            if True or not self.stl: reward = self.step_penalty
 
         return obs, reward, done, info
 
@@ -115,7 +123,7 @@ class MultiStlEnv(MiniGridEnv):
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
         p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [9, 0, 0]       # "wall" (9 = lava, 2 = wall)
+        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
         a = [10, 0, 0]      # agent
         g = [8, 0, 0]       # goal
         f = [0, 0, 0]       # floor
