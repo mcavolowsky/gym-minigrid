@@ -144,7 +144,7 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
 #                                                  #
-            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,f,p],
+            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
 #                                                  #
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
