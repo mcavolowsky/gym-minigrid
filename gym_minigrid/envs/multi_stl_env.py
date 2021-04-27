@@ -1,7 +1,7 @@
 from gym_minigrid.minigrid import *
 from gym_minigrid.register import register
 
-
+import mtl
 
 class MultiStlEnv(MiniGridEnv):
     """
@@ -9,7 +9,7 @@ class MultiStlEnv(MiniGridEnv):
     This environment is similar to LavaCrossing but simpler in structure.
     """
 
-    def __init__(self, cells, seed=None):
+    def __init__(self, cells, spec=None, seed=None):
         self.cells = cells
         self.height, self.width, _ = cells.shape
 
@@ -31,7 +31,10 @@ class MultiStlEnv(MiniGridEnv):
         self.path = []
         self.lavas = []
 
-        self.stl = True
+        if spec:
+            self.phi = mtl.parse(spec)
+        else:
+            self.phi = None
 
     def _gen_grid(self, width, height):
         assert width >= 5 and height >= 5
@@ -94,15 +97,13 @@ class MultiStlEnv(MiniGridEnv):
 
         if done:
             if tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='goal']:
-                if self.stl:  # this is the "STL" implemetation
-                    reward = min([(x_a - x_l) ** 2 + (y_a - y_l) ** 2
-                                  for (x_a, y_a) in self.path
-                                  for (x_l, y_l) in self.lavas]) ** 0.5
+                if self.phi:  # this is the "STL" implemetation
+                    reward = self.phi(self.get_signals())
                 else:
                     reward = self.goal_reward
                 #print('goal!')
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
-                if self.stl:
+                if self.phi:
                     reward = 0
                 else:
                     reward = self.failure_reward
@@ -120,6 +121,13 @@ class MultiStlEnv(MiniGridEnv):
         return obs
 
 
+    def get_signals(self):
+        data = {
+            'a' : [(t,min([((p[0]-l[0])**2 + (p[1]-l[1])**2)**0.5 for l in self.lavas]))
+                   for (t,p) in enumerate(self.path)]
+        }
+        return data
+
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
         p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
@@ -135,9 +143,9 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-
-            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
-
+#                                                  #
+            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,f,p],
+#                                                  #
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
@@ -145,7 +153,7 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
         ])
-        super().__init__(cells=grid_cells)
+        super().__init__(cells=grid_cells, spec='(G a)')
 
 register(
     id='MiniGrid-TripleCrossing-v0',
