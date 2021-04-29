@@ -23,7 +23,7 @@ class MultiStlEnv(MiniGridEnv):
         )
 
         self.goal_reward = 1
-        self.failure_reward = -1
+        self.failure_reward = 0
         self.step_penalty = -0.01
         self.reward_range = (self.max_steps*self.step_penalty+self.failure_reward,
                              self.goal_reward)
@@ -96,9 +96,9 @@ class MultiStlEnv(MiniGridEnv):
         self.path.append(self.agent_pos)
 
         if self.phi:
-            reward = np.array([0,0])
+            reward = np.array([0.0,0.0])
         else:
-            reward = np.array([0])
+            reward = np.array([0.0])
 
         if done:
             if tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='goal']:
@@ -108,14 +108,14 @@ class MultiStlEnv(MiniGridEnv):
                 #print('goal!')
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
                 if self.phi:
-                    reward[1] = 0
+                    reward[1] = self.failure_reward
                 reward[0] = self.failure_reward
                 #print('lava!')
 
         else:
             reward[0] = self.step_penalty
 
-        if not self.phi: reward = reward.item()
+        #if not self.phi: reward = reward.item()
 
         return obs, reward, done, info
 
@@ -158,8 +158,8 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
         ])
-        phi = '(G a)'
-        #phi = None
+        #phi = '(G a)'
+        phi = None
         super().__init__(cells=grid_cells, spec=phi)
 
 register(
