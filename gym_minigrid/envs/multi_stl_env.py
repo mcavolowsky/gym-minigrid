@@ -95,22 +95,27 @@ class MultiStlEnv(MiniGridEnv):
 
         self.path.append(self.agent_pos)
 
+        if self.phi:
+            reward = np.array([0,0])
+        else:
+            reward = np.array([0])
+
         if done:
             if tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='goal']:
                 if self.phi:  # this is the "STL" implemetation
-                    reward = self.phi(self.get_signals())
-                else:
-                    reward = self.goal_reward
+                    reward[1] = self.phi(self.get_signals())
+                reward[0] = self.goal_reward
                 #print('goal!')
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
                 if self.phi:
-                    reward = 0
-                else:
-                    reward = self.failure_reward
+                    reward[1] = 0
+                reward[0] = self.failure_reward
                 #print('lava!')
 
         else:
-            if True or not self.stl: reward = self.step_penalty
+            reward[0] = self.step_penalty
+
+        if not self.phi: reward = reward.item()
 
         return obs, reward, done, info
 
@@ -153,7 +158,9 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
         ])
-        super().__init__(cells=grid_cells, spec='(G a)')
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
 
 register(
     id='MiniGrid-TripleCrossing-v0',
