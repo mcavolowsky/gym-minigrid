@@ -2,6 +2,7 @@ from gym_minigrid.minigrid import *
 from gym_minigrid.register import register
 
 import mtl
+import random
 
 class MultiStlEnv(MiniGridEnv):
     """
@@ -9,9 +10,16 @@ class MultiStlEnv(MiniGridEnv):
     This environment is similar to LavaCrossing but simpler in structure.
     """
 
-    def __init__(self, cells, spec=None, seed=None):
+    def __init__(self, cells, spec=None, seed=None, random_start=False):
         self.cells = cells
         self.height, self.width, _ = cells.shape
+
+        self.agent_pos_list = []
+        for j in range(self.height):
+            for i in range(self.width):
+                if self.cells[j, i, 0] == 10:
+                    self.agent_pos_list.append(np.array([i,j,self.cells[j, i, 2]]))
+                    self.cells[j, i, :] = np.array([0, 0, 0])
 
         super().__init__(
             height=self.height,
@@ -44,12 +52,16 @@ class MultiStlEnv(MiniGridEnv):
 
         self.lavas = []
 
+        a_pos = random.choice(self.agent_pos_list)
+        self.agent_pos = (a_pos[0], a_pos[1])
+        self.agent_dir = a_pos[2]
+
         for j in range(self.height):
             for i in range(self.width):
                 obj = self._parse_object(self.cells[j,i,:])
                 if obj=='agent':
-                    self.agent_pos = (i, j)
-                    self.agent_dir = self.cells[j,i,2]
+                    # rearranged things so there should never be an 'agent' cell at this point
+                    raise ValueError
                 elif obj==None:
                     pass
                 else:
@@ -114,8 +126,12 @@ class MultiStlEnv(MiniGridEnv):
 
         else:
             reward[0] = self.step_penalty
+            reward[1] = self.step_penalty
 
-        #if not self.phi: reward = reward.item()
+        if not self.phi:
+            reward = reward.item()
+        else:
+            reward = reward[1].item()
 
         return obs, reward, done, info
 
@@ -136,7 +152,7 @@ class MultiStlEnv(MiniGridEnv):
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
         p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
+        w = [9, 0, 0]       # "wall" (9 = lava, 2 = wall)
         a = [10, 0, 0]      # agent
         g = [8, 0, 0]       # goal
         f = [0, 0, 0]       # floor
@@ -158,11 +174,45 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
         ])
-        #phi = '(G a)'
-        phi = None
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
+
+class TripleCrossingEnv_Random(MultiStlEnv):
+    def __init__(self):
+        p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
+        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
+        a = [10, 0, 0]      # agent
+        g = [8, 0, 0]       # goal
+        f = [0, 0, 0]       # floor
+
+        grid_cells = np.array([
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
+            [p,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+#                                                  #
+            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
+#                                                  #
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
+        ])
+        phi = '(G a)'
+        #phi = None
         super().__init__(cells=grid_cells, spec=phi)
 
 register(
     id='MiniGrid-TripleCrossing-v0',
     entry_point='gym_minigrid.envs:TripleCrossingEnv'
+)
+
+register(
+    id='MiniGrid-TripleCrossing-Random-v0',
+    entry_point='gym_minigrid.envs:TripleCrossingEnv_Random'
 )
