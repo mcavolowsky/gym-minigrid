@@ -115,7 +115,7 @@ class MultiStlEnv(MiniGridEnv):
         if done:
             if tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='goal']:
                 if self.phi:  # this is the "STL" implemetation
-                    reward[1] = self.phi(self.get_signals())
+                    reward[1] = self.phi (self.get_signals())
                 reward[0] = self.goal_reward
                 #print('goal!')
             elif tuple(self.agent_pos) in [c.cur_pos for c in self.grid.grid if c and c.type=='lava']:
@@ -126,12 +126,12 @@ class MultiStlEnv(MiniGridEnv):
 
         else:
             reward[0] = self.step_penalty
-            reward[1] = self.step_penalty
+            #reward[1] = self.step_penalty
 
         if not self.phi:
             reward = reward.item()
         else:
-            reward = reward[1].item()
+            reward = reward #reward[1].item()
 
         return obs, reward, done, info
 
@@ -149,13 +149,15 @@ class MultiStlEnv(MiniGridEnv):
         }
         return data
 
+
+
 class TripleCrossingEnv(MultiStlEnv):
     def __init__(self):
-        p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [9, 0, 0]       # "wall" (9 = lava, 2 = wall)
-        a = [10, 0, 0]      # agent
-        g = [8, 0, 0]       # goal
-        f = [0, 0, 0]       # floor
+        p = [2,5,0]  # perimiter (it's a wall,but it's than the "wall")
+        w = [9,0,0]  # "wall" (9 = lava,2 = wall)
+        a = [10,0,0]  # agent
+        g = [8,0,0]  # goal
+        f = [0,0,0]  # floor
 
         grid_cells = np.array([
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
@@ -164,9 +166,9 @@ class TripleCrossingEnv(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-#                                                  #
+            #                                      #
             [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
-#                                                  #
+            #                                      #
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
@@ -180,11 +182,11 @@ class TripleCrossingEnv(MultiStlEnv):
 
 class TripleCrossingEnv_Random(MultiStlEnv):
     def __init__(self):
-        p = [2, 5, 0]       # perimiter (it's a wall, but it's than the "wall")
-        w = [2, 0, 0]       # "wall" (9 = lava, 2 = wall)
-        a = [10, 0, 0]      # agent
-        g = [8, 0, 0]       # goal
-        f = [0, 0, 0]       # floor
+        p = [2, 5, 0]  # perimiter (it's a wall, but it's than the "wall")
+        w = [9, 0, 0]  # "wall" (9 = lava, 2 = wall)
+        a = [10, 0, 0]  # agent
+        g = [8, 0, 0]  # goal
+        f = [0, 0, 0]  # floor
 
         grid_cells = np.array([
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
@@ -193,9 +195,9 @@ class TripleCrossingEnv_Random(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
-#                                                  #
+            #                                      #
             [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
-#                                                  #
+            #                                      #
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
@@ -203,9 +205,130 @@ class TripleCrossingEnv_Random(MultiStlEnv):
             [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
             [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
         ])
+
         phi = '(G a)'
         #phi = None
         super().__init__(cells=grid_cells, spec=phi)
+
+class TripleCrossingWallEnv(MultiStlEnv):
+    def __init__(self):
+        p = [2, 5, 0]  # perimiter (it's a wall, but it's than the "wall")
+        w = [2, 0, 0]  # "wall" (9 = lava, 2 = wall)
+        a = [10, 0, 0]  # agent
+        g = [8, 0, 0]  # goal
+        f = [0, 0, 0]  # floor
+
+        grid_cells = np.array([
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,a,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            #                                      #
+            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
+            #                                      #
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
+        ])
+
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
+
+class TripleCrossingWallEnv_Random(MultiStlEnv):
+    def __init__(self):
+        p = [2, 5, 0]  # perimiter (it's a wall, but it's than the "wall")
+        w = [2, 0, 0]  # "wall" (9 = lava, 2 = wall)
+        a = [10, 0, 0]  # agent
+        g = [8, 0, 0]  # goal
+        f = [0, 0, 0]  # floor
+
+        grid_cells = np.array([
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
+            [p,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            #                                      #
+            [p,f,f,f,w,w,w,w,w,w,w,w,w,w,w,w,w,w,w,f,w,w,w,w,f,f,p],
+            #                                      #
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
+        ])
+
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
+
+class TripleCrossingNarrowEnv(MultiStlEnv):
+    def __init__(self):
+        p = [2,5,0]  # perimiter (it's a wall,but it's than the "wall")
+        w = [9,0,0]  # "wall" (9 = lava,2 = wall)
+        a = [10,0,0]  # agent
+        g = [8,0,0]  # goal
+        f = [0,0,0]  # floor
+
+        grid_cells = np.array([
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
+            [p,f,f,f,f,f,f,f,f,a,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            #                                      #
+            [p,f,f,f,w,w,w,w,w,f,w,w,w,w,f,f,p],
+            #                                      #
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
+        ])
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
+
+class TripleCrossingNarrowEnv_Random(MultiStlEnv):
+    def __init__(self):
+        p = [2, 5, 0]  # perimiter (it's a wall, but it's than the "wall")
+        w = [9, 0, 0]  # "wall" (9 = lava, 2 = wall)
+        a = [10, 0, 0]  # agent
+        g = [8, 0, 0]  # goal
+        f = [0, 0, 0]  # floor
+
+        grid_cells = np.array([
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p],
+            [p,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            #                                      #
+            [p,f,f,f,w,w,w,w,w,f,w,w,w,w,f,f,p],
+            #                                      #
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,f,f,f,f,f,f,f,p],
+            [p,f,f,f,f,f,f,f,f,g,f,f,f,f,f,f,p],
+            [p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p]
+        ])
+
+        phi = '(G a)'
+        #phi = None
+        super().__init__(cells=grid_cells, spec=phi)
+
 
 register(
     id='MiniGrid-TripleCrossing-v0',
@@ -215,4 +338,24 @@ register(
 register(
     id='MiniGrid-TripleCrossing-Random-v0',
     entry_point='gym_minigrid.envs:TripleCrossingEnv_Random'
+)
+
+register(
+    id='MiniGrid-TripleCrossing-Walls-v0',
+    entry_point='gym_minigrid.envs:TripleCrossingWallsEnv'
+)
+
+register(
+    id='MiniGrid-TripleCrossing-Walls-Random-v0',
+    entry_point='gym_minigrid.envs:TripleCrossingWallsEnv_Random'
+)
+
+register(
+    id='MiniGrid-TripleCrossing-Narrow-v0',
+    entry_point='gym_minigrid.envs:TripleCrossingNarrowEnv'
+)
+
+register(
+    id='MiniGrid-TripleCrossing-Narrow-Random-v0',
+    entry_point='gym_minigrid.envs:TripleCrossingNarrowEnv_Random'
 )

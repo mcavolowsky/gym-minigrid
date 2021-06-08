@@ -69,9 +69,10 @@ class StateBonus(gym.core.Wrapper):
     are visited on the grid.
     """
 
-    def __init__(self, env):
+    def __init__(self, env, scaling=1):
         super().__init__(env)
         self.counts = {}
+        self.scaling = scaling
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
@@ -91,7 +92,7 @@ class StateBonus(gym.core.Wrapper):
         self.counts[tup] = new_count
 
         bonus = 1 / math.sqrt(new_count)
-        reward += bonus
+        reward += bonus*self.scaling
 
         return obs, reward, done, info
 
