@@ -41,8 +41,10 @@ class MultiStlEnv(MiniGridEnv):
 
         if spec:
             self.phi = mtl.parse(spec)
+            self.reward_size = 2
         else:
             self.phi = None
+            self.reward_size = 1
 
     def _gen_grid(self, width, height):
         assert width >= 5 and height >= 5
