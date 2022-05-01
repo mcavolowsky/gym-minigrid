@@ -21,4 +21,4 @@ from gym_minigrid.envs.dynamicobstacles import *
 from gym_minigrid.envs.distshift import *
 
 
-from gym_minigrid.envs.multi_stl_env import *
+#from gym_minigrid.envs.multi_stl_env import *
