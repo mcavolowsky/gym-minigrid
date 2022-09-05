@@ -76,7 +76,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--env",
     help="gym environment to load",
-    default='MiniGrid-TripleCrossing-v0'
+    #default='MiniGrid-KeyCorridorS3R1-v0',
+    default='MiniGrid-KeyCorridorS3R3-v0',
 )
 parser.add_argument(
     "--seed",
