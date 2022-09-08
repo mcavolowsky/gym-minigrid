@@ -23,6 +23,8 @@ class KeyCorridor(RoomGrid):
             seed=seed,
         )
 
+        self.failure = True
+
     def _gen_grid(self, width, height):
         super()._gen_grid(width, height)
 
@@ -51,10 +53,16 @@ class KeyCorridor(RoomGrid):
     def step(self, action):
         obs, reward, done, info = super().step(action)
 
+        if self.steps_remaining == 0:
+            self.failure = True
+        else:
+            self.failure = False
+
         if action == self.actions.pickup:
             if self.carrying and self.carrying == self.obj:
                 reward = self._reward()
                 done = True
+                self.failure = False
 
         return obs, reward, done, info
 
